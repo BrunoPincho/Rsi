@@ -1,0 +1,19 @@
+exten => 75346,1,Goto(voipz,s,1)
+
+[voipz]
+exten => s,1,Answer
+;exten => s,n,Playback(${PATH}/teste)
+exten => s,n,WaitExten
+exten => 1,1,Goto(callid,s,1)
+exten => 2,1,Goto(record,s,1)
+exten => 3,1,Hangup
+
+
+[callid]
+exten => s,1,SayDigits(${CALLERID(num)})
+exten => s,n,Goto(voipz,s,1)
+
+[record]
+exten => s,1,Record(${PATH2}/record.wav)
+exten => s,n,Playback(${PATH2}/record)
+exten => s,n,Hangup
