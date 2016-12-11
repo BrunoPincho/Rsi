@@ -1,12 +1,19 @@
+
 exten => 75346,1,Goto(voipz,s,1)
 
 [voipz]
+exten => t,1,Goto(voipz,s,1)	
+
 exten => s,1,Answer
-;exten => s,n,Playback(${PATH}/teste)
+exten => s,n,SayAlpha(hello)
+exten => s,n,Playback(${PATH2}/record)
 exten => s,n,WaitExten
+
 exten => 1,1,Goto(callid,s,1)
 exten => 2,1,Goto(record,s,1)
-exten => 3,1,Hangup
+exten => 3,1,Goto(lunar,s,1)
+exten => 0,1,Hangup
+
 
 
 [callid]
@@ -17,3 +24,18 @@ exten => s,n,Goto(voipz,s,1)
 exten => s,1,Record(${PATH2}/record.wav)
 exten => s,n,Playback(${PATH2}/record)
 exten => s,n,Hangup
+
+sip config
+
+
+[3003]
+type=friend
+host=dynamic
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
