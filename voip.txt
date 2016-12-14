@@ -51,9 +51,37 @@ exten => s,n,Set(fuel=${MATH(${fuel}-${burn})})
 exten => s,n,SayNumber(${fuel})
   same => n,Set(altitude=${MATH(${altitude}+${velocity}*${time_interval}+(${burn}+${g})*$(time_interval))})	
 
-exten => s,n,Gotoif($[${altitude} < 0]?n:n+2)
-  ;crashou
-exten => s,n,Set(velocity=${MATH(${velocity}+(${burn}+${g})*${time_interval})})
+exten => s,n,Gotoif($[${altitude} < 0]?crash:speed)
+	same => n,SayAlpha(cr)
+exten => s,n(crash),SayDigits(velocity)	
+exten => s,n,Goto(s,1)
+;aqui ja crashou
+exten => s,n(speed),Set(velocity=${MATH(${velocity}+(${burn}+${g})*${time_interval})})
+
+
+exten => s,n,Gotoif($[${altitude}==0 && ${velocity}==0]?:nofuel)
+	same => n,SayDigits(11)
+	same => n,Goto(repeat_lunar,s,1)
+;aqui aterrou bem
+
+exten => s,n(nofuel),Gotoif($[${fuel}<0]?:reset)
+	same => n,SayDigits(0101);stuff is rekt falling hard
+	same => n,Set(velocity=${MATH(-(${velocity}*${velocity}-2*${g}*${altitude})^0.5)})
+	same => n,Goto(repeat_lunar,s,1)
+
+;aqui ficou sem combustivel e aterrou à velocidade indicada-> crashou 
+
+exten => s,n(reset),Goto(s,1)
+
+[repeat_lunar]
+exten => t,1,Goto(voipz,s,1)
+
+exten => s,1,SayDigits(999)
+exten => s,2,WaitExten
+
+exten => 1,n,Goto(lunar,s,1)
+
+exten => s,3,Goto(voipz,s,1)
 
 sip config
 
