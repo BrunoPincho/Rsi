@@ -1,4 +1,3 @@
-
 exten => 75346,1,Goto(voipz,s,1)
 
 [voipz]
@@ -32,21 +31,29 @@ exten => s,2,SayNumber(${velocity})
 exten => s,3,SayNumber(${fuel})
 
 exten => s,4,Read(burn,,4,,,5)
-  same => n,SayNumber(${burn})
+exten => s,5,SayNumber(${burn})
   
-  same => n,GotoIf($["${burn}" > "75"]?100)
-  same => n,GotoIf($["${burn}" < "0"]?101)
-  same => n,GotoIf($["${burn}" > "${fuel}"]?101)	
-	exten => s,100,Set(burn=75) 
-	exten => s,101,Set(burn=0) 
-	exten => s,102,Set(burn=${fuel})
+exten => s,6,GotoIf($[${burn} > 75]?9:7)
+exten => s,7,GotoIf($[${burn} < 0]?11:8)
+exten => s,8,GotoIf($[${burn} > ${fuel}]?13:15)
 
-exten => s,5,Set(fuel=${MATH(${fuel}-${burn})})
-exten => s,6,SayNumber(${fuel})
-
+;exten => s,7,Set(${burn}=${fuel})
+exten => s,9,Set(burn=75)		
+exten => s,10,Goto(s,15)
+exten => s,11,Set(burn=0)
+exten => s,12,Goto(s,15)
+exten => s,13,Set(burn=${fuel})
+exten => s,14,Goto(s,15)
+ 		
+exten => s,15,SayNumber(${burn})	 
+	
+exten => s,n,Set(fuel=${MATH(${fuel}-${burn})})
+exten => s,n,SayNumber(${fuel})
   same => n,Set(altitude=${MATH(${altitude}+${velocity}*${time_interval}+(${burn}+${g})*$(time_interval))})	
 
-
+exten => s,n,Gotoif($[${altitude} < 0]?n:n+2)
+  ;crashou
+exten => s,n,Set(velocity=${MATH(${velocity}+(${burn}+${g})*${time_interval})})
 
 sip config
 
