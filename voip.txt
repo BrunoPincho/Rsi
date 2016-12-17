@@ -1,10 +1,70 @@
-exten => 75346,1,Goto(voipz,s,1)
 
-[voipz]
-exten => t,1,Goto(voipz,s,1)	
+;hints
+exten => 3000,hint,SIP/3000,CustomPresence:3000
+exten => 3001,hint,SIP/3001,CustomPresence:3001
+exten => 3002,hint,SIP/3002,CustomPresence:3002
+exten => 3003,hint,SIP/3003,CustomPresence:3003
+exten => 3004,hint,SIP/3004,CustomPresence:3004
+exten => 3005,hint,SIP/3005,CustomPresence:3005
+exten => 3006,hint,SIP/3006,CustomPresence:3006
+exten => 3007,hint,SIP/3007,CustomPresence:3007
+exten => 3008,hint,SIP/3008,CustomPresence:3008
+exten => 3009,hint,SIP/3009,CustomPresence:3009
+
+exten => 4000,hint,SIP/4000,CustomPresence:4000
+exten => 4001,hint,SIP/4001,CustomPresence:4001
+exten => 4002,hint,SIP/4002,CustomPresence:4002
+exten => 4003,hint,SIP/4003,CustomPresence:4003
+exten => 4004,hint,SIP/4004,CustomPresence:4004
+exten => 4005,hint,SIP/4005,CustomPresence:4005
+exten => 4006,hint,SIP/4006,CustomPresence:4006
+exten => 4007,hint,SIP/4007,CustomPresence:4007
+exten => 4008,hint,SIP/4008,CustomPresence:4008
+exten => 4009,hint,SIP/4009,CustomPresence:4009
+
+;hints
+
+exten => _300X,1,Gosub(states,s,1(${EXTEN}))
+
+exten => _400X,n,Gosub(states,s,1(${EXTEN}))
+
+exten => _500X,n,Gosub(states,s,1(${EXTEN}))
+
+;exten => _400X,1,Dial(sip/${EXTEN},,r)
+;exten => _500X,1,Dial(sip/${EXTEN},,r)
+exten => 9999,1,Goto(teste_IVVR,s,1)
+;Alunos: acrescentar aqui
+
+exten => 75346,1,Goto(ivvr,s,1)
+
+
+[states]
+exten => s,1,Answer
+;exten => s,n,Set(PRESENCE_STATE(CustomPresence:${CALLERID(num)})=unavailable,,)
+;exten => s,n,Set(PRESENCE_STATE(CustomPresence:${ARG1})=unavailable,,) ;not_set /unavailable/avail 
+same => n,Saynumber(${ARG1})  
+same => n,Dial(sip/${ARG1},,r)
+;exten => s,n,Set(PRESENCE_STATE(CustomPresence:${ARG1})=available,,)
+;exten => s,n,Set(PRESENCE_STATE(CustomPresence:${CALLERID(num)})=available,,)
+same => n,Hangup
+
+
+
+[temp]
+exten => s,1,Answer
+same => n, Saynumber(${ARG1})
+;same => n,Set(DEVICE_STATE(sip/${ARG1})=BUSY)
+;same => n,Dial(sip/${ARG1},,r)
+same => n, Verbose(extensao: ${EXTENSION_STATE(3002@demo)})
+same => n, Hangup
+
+
+
+[ivvr]
+exten => t,1,Goto(ivvr,s,1)	
 
 exten => s,1,Answer
-exten => s,n,Background(${PATH2}/record)
+exten => s,n,Playback(${PATH}/teste)
 exten => s,n,WaitExten
 
 exten => 1,1,Goto(callid,s,1)
@@ -16,7 +76,7 @@ exten => 0,1,Hangup
 
 [callid]
 exten => s,1,SayDigits(${CALLERID(num)})
-exten => s,n,Goto(voipz,s,1)
+exten => s,n,Goto(ivvr,s,1)
 
 [record]
 exten => s,1,Record(${PATH2}/record.wav)
@@ -24,7 +84,7 @@ exten => s,n,Playback(${PATH2}/record)
 exten => s,n,Hangup
 
 [lunar]
-exten => t,1,Goto(lunar,s,1)
+exten => t,1,Set(burn=0)
 
 exten => s,1,SayNumber(${altitude})
 exten => s,2,SayNumber(${velocity})
@@ -74,17 +134,35 @@ exten => s,n(nofuel),Gotoif($[${fuel}<0]?:reset)
 exten => s,n(reset),Goto(s,1)
 
 [repeat_lunar]
-exten => t,1,Goto(voipz,s,1)
+exten => t,1,Goto(ivvr,s,1)
 
 exten => s,1,SayDigits(999)
 exten => s,2,WaitExten
 
 exten => 1,n,Goto(lunar,s,1)
 
-exten => s,3,Goto(voipz,s,1)
+exten => s,3,Goto(ivvr,s,1)
+
 
 sip config
 
+[3000]
+type=friend
+host=dynamic
+context=demo
+
+
+
+[3001]
+type=friend
+host=dynamic
+context=demo
+
+
+[3002]
+type=friend
+host=dynamic
+context=demo
 
 [3003]
 type=friend
@@ -97,3 +175,319 @@ allow=gsm
 allow=h261
 allow=h263
 allow=h263p
+busylevel=1
+
+[3004]
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
+busylevel=1
+
+
+[3005]
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
+busylevel=1
+
+
+[3006]
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
+busylevel=1
+
+
+[3007]
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
+busylevel=1
+
+
+[3008]
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
+busylevel=1
+
+
+[3009]
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
+busylevel=1
+
+
+[4000]
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
+busylevel=1
+
+
+[4001]
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
+busylevel=1
+
+
+[4002]
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
+busylevel=1
+
+
+[4003]
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
+busylevel=1
+
+
+[4004]
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
+busylevel=1
+
+
+[4005]
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
+busylevel=1
+
+
+[4006]
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
+busylevel=1
+
+
+[4007]
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
+busylevel=1
+
+
+[4008]
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
+busylevel=1
+
+
+[4009]
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+type=friend
+host=dynamic
+context=demo
+busylevel=1
+disallow=all 
+allow=ulaw
+allow=alaw
+allow=speex
+allow=gsm
+allow=h261
+allow=h263
+allow=h263p
+busylevel=1
